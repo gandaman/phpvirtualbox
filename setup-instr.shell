@@ -1,0 +1,36 @@
+#!/bin/sh -x 
+# LICENSE: CC0
+
+VBOXMANAGERUSER=vboxphp
+
+echo "Totally untestted - more a list of commmands than a script, I suggest
+you run each part manually..."
+
+do() {
+   echo "*** About to run: $@"
+   $@
+   echo Hit return
+   read x
+}
+
+do sudo yum install -y php
+do sudo yum install -y php-soap
+
+do sudo adduser $VBOXMANAGERUSER
+
+echo NOTE you must set the $VBOXMANAGERUSER password also in config.php:
+vi config.php
+
+do echo "Now add $VBOXMANAGERUSER to group vboxusers"
+do sudo vi /etc/group
+
+echo You need $VBOXMANAGERUSER login pasword now:
+echo "== CTRL-Z & background this process if it starts ok..."
+do su $VBOXMANAGERUSER -c vboxwebsrv 
+
+echo "* Now trying to serve directory"
+echo "== CTRL-Z & background this process if it starts ok..."
+do php -S 0.0.0.0:8000
+
+echo NOTE - the web login for phpVirtualbox is admin/admin
+
